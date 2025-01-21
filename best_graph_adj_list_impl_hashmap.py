@@ -1,3 +1,5 @@
+from collections import deque
+
 class Graph:
     def __init__(self):
         # Will store map of vertex -> connected vertices
@@ -18,6 +20,46 @@ class Graph:
             adj_nodes = [j for j in connected_vertices]
             print(f'Adjacent nodes are {adj_nodes}')
 
+    def get_index(self, node):
+        keys = list(self.vertex_mapping.keys())
+        return keys.index(node)
+
+    def dfs(self, node):
+        visited = [False for _ in range(len(self.vertex_mapping.items()))]
+
+        def dfs_helper(local_node):
+            index = self.get_index(local_node)
+            vertices = self.vertex_mapping[local_node]
+            # Process the node
+            print(local_node, end=" ")
+            visited[index] = True
+            for vertex in vertices:
+                vertex_index = self.get_index(vertex)
+                if not visited[vertex_index]:
+                    dfs_helper(vertex)
+        
+        dfs_helper(node)
+        print('\n')
+        
+    def bfs(self, node):
+        visited = [False for _ in range(len(self.vertex_mapping.keys()))]
+        queue = deque()
+        
+        index = self.get_index(node)
+        visited[index] = True
+        queue.append(node)
+        
+        while len(queue) != 0:
+            node = queue.popleft()
+            print(node, end=" ")
+            neighbors = self.vertex_mapping[node]
+            for vertex in neighbors:
+                vertex_index = self.get_index(vertex)
+                if not visited[vertex_index]:
+                    visited[vertex_index] = True
+                    queue.append(vertex)
+
+        print('\n')
 
 if __name__ == '__main__':
     graph = Graph()
@@ -30,11 +72,14 @@ if __name__ == '__main__':
 
     # Adding edges
     graph.add_edge('A', 'B', is_directed=True)
+    graph.add_edge('A', 'C', is_directed=True)
     graph.add_edge('B', 'D', is_directed=True)
-    graph.add_edge('D', 'C', is_directed=True)
-    graph.add_edge('C', 'A', is_directed=True)
-    graph.add_edge('A', 'D', is_directed=True)
-    graph.add_edge('B', 'C', is_directed=True)
 
     # Display all
-    graph.display()
+    # graph.display()
+
+    # DFS traversal
+    graph.dfs('A')
+
+    # DFS traversal
+    graph.bfs('A')
